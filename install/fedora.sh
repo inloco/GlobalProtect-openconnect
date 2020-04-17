@@ -1,6 +1,6 @@
 #! /bin/bash
 sudo dnf groupinstall "Development Tools" -y
-sudo dnf install -y install qt5-qtbase-devel \
+sudo dnf install -y qt5-qtbase-devel \
  qt5-qtwebsockets-devel qt5-qtwebengine-devel
 cd $(mktemp -d)
 curl https://github.com/PauloLuna/GlobalProtect-openconnect/archive/v1.2.2.zip \
