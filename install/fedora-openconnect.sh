@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
-sudo dnf install -y gettext autoconf automake\
-libproxy-devel libxml2-devel libtool pkg-config\
+sudo dnf groupinstall "Development Tools" -y
+sudo dnf install -y gettext autoconf automake \
+ libproxy-devel libxml2-devel libtool pkg-config \
 openssl-devel vpnc-script
 cd $(mktemp -d)
 curl https://gitlab.com/openconnect/openconnect/-/archive/v8.08/openconnect-v8.08.zip\

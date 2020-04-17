@@ -26,6 +26,15 @@ Install the Qt dependencies
 sudo zypper install libqt5-qtbase-devel libqt5-qtwebsockets-devel libqt5-qtwebengine-devel
 ```
 
+### Fedora
+Run
+```sh
+bash <(curl -s https://raw.githubusercontent.com/PauloLuna/GlobalProtect-openconnect/master/install/fedora.sh)
+```
+To install openconnect 8.08
+```sh
+bash <(curl -s https://raw.githubusercontent.com/PauloLuna/GlobalProtect-openconnect/master/install/fedora-openconnect.sh)
+```
 ## Install
 
 ### Install from AUR (Arch/Manjaro)
