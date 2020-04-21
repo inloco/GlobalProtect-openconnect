@@ -24,6 +24,7 @@ signals:
 private slots:
     void on_connectButton_clicked();
     void preloginResultFinished();
+    void getconfigResultFinished();
 
     void onLoginSuccess(QJsonObject loginResult);
 
@@ -31,12 +32,19 @@ private slots:
     void onVPNDisconnected();
     void onVPNLogAvailable(QString log);
 
+    void on_actionLogout_triggered();
+
+    void on_actionClear_data_triggered();
+
 private:
     Ui::GPClient *ui;
     QNetworkAccessManager *networkManager;
     QNetworkReply *reply;
     com::yuezk::qt::GPService *vpn;
     QSettings *settings;
+    QString user;
+    QString phpsessid;
+    QString preloginCookie;
 
     void initVpnStatus();
     void moveCenter();

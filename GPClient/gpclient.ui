@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>260</width>
-    <height>338</height>
+    <height>343</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,6 +103,9 @@
        </widget>
       </item>
       <item>
+       <widget class="QComboBox" name="gatewaysComboBox"/>
+      </item>
+      <item>
        <widget class="QPushButton" name="connectButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -111,7 +114,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Connect</string>
+         <string>Login</string>
         </property>
        </widget>
       </item>
@@ -119,6 +122,34 @@
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>260</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionLogout"/>
+    <addaction name="actionClear_data"/>
+   </widget>
+   <addaction name="menuSettings"/>
+  </widget>
+  <action name="actionLogout">
+   <property name="text">
+    <string>Logout</string>
+   </property>
+  </action>
+  <action name="actionClear_data">
+   <property name="text">
+    <string>Clear data</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="resources.qrc"/>

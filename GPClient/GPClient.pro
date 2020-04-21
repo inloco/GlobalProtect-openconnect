@@ -1,6 +1,6 @@
 TARGET = gpclient
 
-QT       += core gui network websockets dbus webenginewidgets
+QT       += core gui network websockets dbus webenginewidgets xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

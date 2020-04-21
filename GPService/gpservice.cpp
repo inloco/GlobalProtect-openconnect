@@ -75,6 +75,32 @@ void GPService::connect(QString server, QString username, QString passwd)
     openconnect->closeWriteChannel();
 }
 
+void GPService::connect_gw(QString server, QString username, QString passwd, QString gateway)
+{
+    if (vpnStatus != GPService::VpnNotConnected) {
+        log("VPN status is: " + QVariant::fromValue(vpnStatus).toString());
+        return;
+    }
+
+    QString bin = findBinary();
+    if (bin == nullptr) {
+        log("Could not found openconnect binary, make sure openconnect is installed, exiting.");
+        return;
+    }
+
+    QStringList args;
+    args << QCoreApplication::arguments().mid(1)
+     << "--protocol=gp"
+     << "-u" << username
+     << "--passwd-on-stdin"
+     << "--timestamp"
+     << server;
+
+    openconnect->start(bin, args);
+    openconnect->write(passwd.toUtf8()+'\n'+gateway.toUtf8()+'\n'+passwd.toUtf8());
+    openconnect->closeWriteChannel();
+}
+
 void GPService::disconnect()
 {
     if (openconnect->state() != QProcess::NotRunning) {
