@@ -10,7 +10,7 @@ SAMLLoginWindow::SAMLLoginWindow(QWidget *parent)
     resize(610, 406);
     QVBoxLayout *verticalLayout = new QVBoxLayout(this);
     webView = new EnhancedWebView(this);
-    webview->setPage(new QWebEnginePage(new QWebEngineProfile()));
+    webView->setPage(new QWebEnginePage(new QWebEngineProfile()));
     webView->setUrl(QUrl("about:blank"));
     verticalLayout->addWidget(webView);
 
