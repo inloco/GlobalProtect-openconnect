@@ -27,7 +27,7 @@ sudo zypper install libqt5-qtbase-devel libqt5-qtwebsockets-devel libqt5-qtweben
 ```
 
 ### Fedora
-Run
+To install client
 ```sh
 bash <(curl -s https://raw.githubusercontent.com/inloco/GlobalProtect-openconnect/master/install/fedora.sh)
 ```
