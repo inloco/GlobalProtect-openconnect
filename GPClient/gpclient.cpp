@@ -243,6 +243,9 @@ void GPClient::onVPNDisconnected()
 void GPClient::onVPNLogAvailable(QString log)
 {
     qInfo() << log;
+    if (log.indexOf("Unexpected 512") >= 0) {
+        on_actionLogout_triggered();
+    }
 }
 
 void GPClient::initVpnStatus() {
