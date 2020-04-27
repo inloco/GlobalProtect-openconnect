@@ -5,6 +5,6 @@ curl https://github.com/inloco/GlobalProtect-openconnect/archive/v1.4.0.zip \
  -o GlobalProtect-openconnect-1.4.0.zip -L
 unzip GlobalProtect-openconnect-1.4.0.zip
 cd GlobalProtect-openconnect-1.4.0
-qmake-qt5 CONFIG+=release
+qmake CONFIG+=release
 make
 sudo make install
