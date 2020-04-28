@@ -23,9 +23,6 @@ GPClient::GPClient(QWidget *parent)
 
     // Restore portal from the previous settings
     settings = new QSettings("com.yuezk.qt", "GPClient");
-    ui->portalInput->setText(settings->value("portal", "").toString());
-    ui->gatewaysComboBox->clear();
-    ui->gatewaysComboBox->addItems(settings->value("gatewaynames", QStringList()).toStringList());
     QObject::connect(this, &GPClient::connectFailed, [this]() {
         updateConnectionStatus("not_connected");
     });
@@ -72,14 +69,16 @@ void GPClient::on_connectButton_clicked()
         }
         vpn->disconnect();
     } else if (btnText.endsWith("Connect")) {
-        QString portal = ui->portalInput->text();
-        settings->setValue("portal", portal);
+        QString portal = settings->value("portal", "").toString();
+        QString gateway = ui->gatewaysComboBox->currentText();
+
+        settings->setValue("lastGateway", gateway);
         ui->statusLabel->setText("Connecting...");
         updateConnectionStatus("pending");
 
         QString host = QString("https://%1/%2:%3").arg(portal, "portal", "portal-userauthcookie");
         qInfo("Host: %s User: %s Token: %s", host.toStdString().c_str(), user.toStdString().c_str(), usertoken.toStdString().c_str());
-        vpn->connect_gw(host, user, usertoken, ui->gatewaysComboBox->currentText());
+        vpn->connect_gw(host, user, usertoken, gateway);
 
     } else {
         ui->statusLabel->setText("Disconnecting...");
@@ -198,34 +197,50 @@ void GPClient::getconfigResultFinished()
     }
 
     settings->setValue("gatewaynames", gatewaynames);
-    ui->gatewaysComboBox->clear();
-    ui->gatewaysComboBox->addItems(gatewaynames);
     updateConnectionStatus("not_connected");
 }
 
 void GPClient::updateConnectionStatus(QString status)
-{
+{    
+    const QStringList gatewaynames = settings->value("gatewaynames", QStringList()).toStringList();
+    const QString lastGateway = settings->value("lastGateway", "").toString();
+    int index = gatewaynames.indexOf(lastGateway);
+    if(index==-1) index=0;
+    // Update combobox data
+    ui->gatewaysComboBox->clear();
+    ui->gatewaysComboBox->addItems(settings->value("gatewaynames", QStringList()).toStringList());
+    ui->gatewaysComboBox->setCurrentIndex(index);
+    // Update Portal Text
+    ui->portalInput->setText(settings->value("portal", "").toString());
+
     if (status == "not_connected") {
+        ui->connectButton->setDisabled(false);
         if(settings->value("userauthcookie").toString().length() == 0
                 || settings->value("gatewaynames", QStringList()).toStringList().length() ==0){
             ui->statusLabel->setText("Not logged in");
             ui->statusImage->setStyleSheet("image: url(:/images/not_connected.png); padding: 15;");
             ui->connectButton->setText("Login");
-            ui->connectButton->setDisabled(false);
+            ui->gatewaysComboBox->setDisabled(true);
+            ui->portalInput->setDisabled(false);
         } else {
             ui->statusLabel->setText("Not Connected");
             ui->statusImage->setStyleSheet("image: url(:/images/not_connected.png); padding: 15;");
             ui->connectButton->setText("Connect");
-            ui->connectButton->setDisabled(false);
+            ui->gatewaysComboBox->setDisabled(false);
+            ui->portalInput->setDisabled(true);
         }
     } else if (status == "pending") {
         ui->statusImage->setStyleSheet("image: url(:/images/pending.png); padding: 15;");
         ui->connectButton->setText("Cancel");
+        ui->portalInput->setDisabled(true);
+        ui->gatewaysComboBox->setDisabled(true);
         ui->connectButton->setDisabled(false);
     } else if (status == "connected") {
         ui->statusLabel->setText("Connected");
         ui->statusImage->setStyleSheet("image: url(:/images/connected.png); padding: 15;");
         ui->connectButton->setText("Disconnect");
+        ui->portalInput->setDisabled(true);
+        ui->gatewaysComboBox->setDisabled(true);
         ui->connectButton->setDisabled(false);
     }
 }
@@ -331,8 +346,7 @@ void GPClient::on_actionClear_data_triggered()
 {
     settings->setValue("portal", "");
     settings->setValue("gatewaynames", QStringList());
-    ui->portalInput->setText("");
-    ui->gatewaysComboBox->clear();
+    settings->setValue("lastGateway", "");
     vpn->disconnect();
     updateConnectionStatus("not_connected");
 }
