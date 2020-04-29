@@ -51,5 +51,6 @@ private:
     void updateConnectionStatus(QString status);
     void doAuth(const QString portal);
     void samlLogin(const QString loginUrl, const QString html = "");
+    const QString getBestAvaialble(const QStringList gatewaysList);
 };
 #endif // GPCLIENT_H

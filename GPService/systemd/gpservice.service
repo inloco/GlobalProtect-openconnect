@@ -5,7 +5,7 @@ Description=GlobalProtect openconnect DBus service
 Environment=LC_ALL=en_US
 Type=dbus
 BusName=com.yuezk.qt.GPService
-ExecStart=/usr/bin/gpservice -i gptun
+ExecStart=/usr/bin/gpservice
 
 [Install]
 WantedBy=multi-user.target

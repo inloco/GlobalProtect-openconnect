@@ -71,15 +71,22 @@ void GPClient::on_connectButton_clicked()
     } else if (btnText.endsWith("Connect")) {
         QString portal = settings->value("portal", "").toString();
         QString gateway = ui->gatewaysComboBox->currentText();
+        QStringList gatewaynames = settings->value("gatewaynames", QStringList()).toStringList();
 
-        settings->setValue("lastGateway", gateway);
         ui->statusLabel->setText("Connecting...");
         updateConnectionStatus("pending");
 
-        QString host = QString("https://%1/%2:%3").arg(portal, "portal", "portal-userauthcookie");
-        qInfo("Host: %s User: %s Token: %s", host.toStdString().c_str(), user.toStdString().c_str(), usertoken.toStdString().c_str());
-        vpn->connect_gw(host, user, usertoken, gateway);
+        //Get best available gateway
+        if(gateway == "Best Available")
+        {
+            QApplication::processEvents();
+            gateway = getBestAvaialble(gatewaynames);
+        }
 
+        settings->setValue("lastGateway", gateway);
+
+        QString host = QString("https://%1/%2:%3").arg(portal, "portal", "portal-userauthcookie");
+        vpn->connect_gw(host, user, usertoken, gateway);
     } else {
         ui->statusLabel->setText("Disconnecting...");
         updateConnectionStatus("pending");
@@ -180,7 +187,6 @@ void GPClient::getconfigResultFinished()
     }
 
     QByteArray xmlBytes = reply->readAll();
-    //qInfo(xmlBytes);
     QDomDocument doc;
     doc.setContent(xmlBytes);
 
@@ -192,6 +198,7 @@ void GPClient::getconfigResultFinished()
             .item(0).toElement().elementsByTagName("list")
             .item(0).toElement().childNodes();
     QStringList gatewaynames;
+    gatewaynames.append("Best Available");
     for(int i = 0; i < gateways.length(); i++){
         gatewaynames.append(gateways.item(i).toElement().attribute("name"));
     }
@@ -349,4 +356,37 @@ void GPClient::on_actionClear_data_triggered()
     settings->setValue("lastGateway", "");
     vpn->disconnect();
     updateConnectionStatus("not_connected");
+}
+
+const QString GPClient::getBestAvaialble(const QStringList gatewaysList)
+{
+    QStringList args;
+    int bestGateway = 1;
+    double bestGatewayTime = 10000.00;
+    QString envBin = "/usr/bin/env";
+    args << "ping"
+     << "-q"
+     << "-c3"
+     << "-W5"
+     << "";
+    QProcess* ping = new QProcess();
+    for(int i = 1; i < gatewaysList.length(); i++)
+    {
+        args[4] = gatewaysList[i];
+        ping->start(envBin, args);
+        ping->waitForFinished();
+        if(ping->exitCode() == 0)
+        {
+            QString out(ping->readAll());
+            QString data = out.split("=")[1].split('/')[1]
+                    .trimmed();
+            double parcial = data.toDouble();
+            if(parcial < bestGatewayTime)
+            {
+                bestGatewayTime = parcial;
+                bestGateway = i;
+            }
+        }
+    }
+    return gatewaysList.at(bestGateway);
 }
