@@ -135,11 +135,23 @@
     <property name="title">
      <string>Settings</string>
     </property>
+    <widget class="QMenu" name="menuCertificates">
+     <property name="title">
+      <string>Certificates</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="separator"/>
+     <addaction name="actionInstall_Root_CA_s"/>
+     <addaction name="actionUninstall_Root_CA_s"/>
+    </widget>
     <addaction name="actionLogout"/>
     <addaction name="actionClear_data"/>
+    <addaction name="separator"/>
+    <addaction name="menuCertificates"/>
    </widget>
    <addaction name="menuSettings"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionLogout">
    <property name="text">
     <string>Logout</string>
@@ -148,6 +160,16 @@
   <action name="actionClear_data">
    <property name="text">
     <string>Clear data</string>
+   </property>
+  </action>
+  <action name="actionInstall_Root_CA_s">
+   <property name="text">
+    <string>Install Root CA's</string>
+   </property>
+  </action>
+  <action name="actionUninstall_Root_CA_s">
+   <property name="text">
+    <string>Uninstall Root CA's</string>
    </property>
   </action>
  </widget>
