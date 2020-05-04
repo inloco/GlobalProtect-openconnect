@@ -30,6 +30,10 @@ GPClient::GPClient(QWidget *parent)
     // QNetworkAccessManager setup
     networkManager = new QNetworkAccessManager(this);
     clientoperator = new GPClientOperator(this);
+    systemTrayIcon = new QSystemTrayIcon(this);
+    systemTrayIcon->setIcon(QIcon(":/images/logo.svg"));
+    systemTrayIcon->setVisible(true);
+    systemTrayIcon->setContextMenu(ui->menuSettings);
 
     // DBus service setup
     vpn = new com::yuezk::qt::GPService("com.yuezk.qt.GPService", "/", QDBusConnection::systemBus(), this);
@@ -309,10 +313,12 @@ void GPClient::on_actionClear_data_triggered()
 
 void GPClient::connectToGateway(const QString gateway)
 {
+    systemTrayIcon->showMessage("Teste", "teste");
     QString portal = settings->value("portal", "").toString();
     QStringList gatewaynames = settings->value("gatewaynames", QStringList()).toStringList();
     QString usertoken = settings->value("userauthcookie", "").toString();
     QString user = settings->value("user", "").toString();
+    ui->statusBar->showMessage("Connect to: " + gateway);
 
     QString host = QString("https://%1/%2:%3").arg(portal, "portal", "portal-userauthcookie");
     qInfo("Connection data %s %s %s %s", host.toStdString().c_str(), user.toStdString().c_str(), usertoken.toStdString().c_str(), gateway.toStdString().c_str());

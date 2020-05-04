@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QSystemTrayIcon>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class GPClient; }
@@ -51,6 +52,7 @@ private:
     GPClientOperator *clientoperator;
     QString phpsessid;
     QString preloginCookie;
+    QSystemTrayIcon * systemTrayIcon;
 
     void initVpnStatus();
     void moveCenter();
