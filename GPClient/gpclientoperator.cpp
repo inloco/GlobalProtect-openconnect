@@ -44,7 +44,6 @@ void GPClientOperator::getConfig(QJsonObject loginResult, QString phpsessid)
     request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
     request.setRawHeader("Connection", "close");
     request.setRawHeader("Host", portal.toStdString().c_str());
-
     reply = networkManager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
     connect(reply, &QNetworkReply::finished, this, &GPClientOperator::getconfigResultFinished);
 }
@@ -103,22 +102,36 @@ void GPClientOperator::installCertificates(const QStringList cas)
     QString scriptName;
     QStringList args;
     QString envBin = "/usr/bin/env";
-    const QString ca_dir = "/usr/local/share/ca-certificates/gpclient/";
-    QString scripttext = "mkdir " + ca_dir;
+    QString ca_dir;
+    QString scripttext;
+    QString scriptend;
+
+    QDir ubuntuDir("/usr/local/share/ca-certificates/");
+    QDir fedoraDir("/etc/pki/ca-trust/source/anchors/");
+    if(ubuntuDir.exists()){
+        ca_dir = ubuntuDir.path()+"/gpclient";
+        scriptend = "\nupdate-ca-certificates\n";
+    } else if(fedoraDir.exists()){
+        ca_dir = fedoraDir.path()+"/gpclient";
+        scriptend = "\nupdate-ca-trust extract\n";
+    } else {
+        notify("Unsupported system.");
+        return;
+    }
 
     for(int i = 0; i<cas.length(); i++){
         QTemporaryFile certificate;
         if(certificate.open()){
             certificate.write(cas.at(i).trimmed().toUtf8());
             certificate.write("\n");
-            scripttext.append("\nmv "+certificate.fileName()
-                              +" "+ca_dir+certificate.fileName().split("/").last()+".crt");
+            scripttext.append("\nmv \""+certificate.fileName()
+                              +"\" \""+ca_dir+certificate.fileName().split("/").last()+".crt\"");
             certificate.setAutoRemove(false);
             certificate.close();
         }
     }
     qInfo(scripttext.toUtf8());
-    scripttext.append("\nupdate-ca-certificates\n");
+    scripttext.append(scriptend);
     if(script.open()){
         script.write(scripttext.toUtf8());
         script.setAutoRemove(false);
@@ -143,8 +156,18 @@ void GPClientOperator::uninstallCertificates()
     QString scriptName;
     QStringList args;
     QString envBin = "/usr/bin/env";
-    const QString ca_dir = "/usr/local/share/ca-certificates/gpclient/";
-    QString scripttext = "rm -rf " + ca_dir+"*\nupdate-ca-certificates -f\n";
+    QString scripttext;
+
+    QDir ubuntuDir("/usr/local/share/ca-certificates/");
+    QDir fedoraDir("/etc/pki/ca-trust/source/anchors/");
+    if(ubuntuDir.exists()){
+        scripttext = "rm -rf " + ubuntuDir.path()+"/gpclient*\nupdate-ca-certificates -f\n";
+    } else if(fedoraDir.exists()){
+        scripttext = "rm -rf " + fedoraDir.path()+"/gpclient*\nupdate-ca-trust extract\n";
+    } else {
+        notify("Unsupported system.");
+        return;
+    }
 
     if(script.open()){
         script.write(scripttext.toUtf8());

@@ -43,6 +43,9 @@ private slots:
 
     void on_actionUninstall_Root_CA_s_triggered();
 
+    void on_actionConnect_triggered();
+    void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+
 private:
     Ui::GPClient *ui;
     QNetworkAccessManager *networkManager;

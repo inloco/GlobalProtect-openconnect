@@ -18,6 +18,7 @@ GPClient::GPClient(QWidget *parent)
     , ui(new Ui::GPClient)
 {
     ui->setupUi(this);
+    
     setFixedSize(width(), height());
     moveCenter();
 
@@ -31,10 +32,9 @@ GPClient::GPClient(QWidget *parent)
     networkManager = new QNetworkAccessManager(this);
     clientoperator = new GPClientOperator(this);
     systemTrayIcon = new QSystemTrayIcon(this);
-    systemTrayIcon->setIcon(QIcon(":/images/logo.svg"));
     systemTrayIcon->setVisible(true);
-    systemTrayIcon->setContextMenu(ui->menuSettings);
-
+    systemTrayIcon->setContextMenu(ui->menuOptions);
+    connect(systemTrayIcon, &QSystemTrayIcon::activated, this, &GPClient::onTrayIconActivated);
     // DBus service setup
     vpn = new com::yuezk::qt::GPService("com.yuezk.qt.GPService", "/", QDBusConnection::systemBus(), this);
     QObject::connect(vpn, &com::yuezk::qt::GPService::connected, this, &GPClient::onVPNConnected);
@@ -51,6 +51,17 @@ GPClient::~GPClient()
     delete reply;
     delete vpn;
     delete settings;
+}
+
+void GPClient::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason){
+    if(reason == QSystemTrayIcon::Trigger){
+        if(isVisible()){
+            hide();
+        } else {
+            show();
+            activateWindow();
+        }
+    }
 }
 
 void GPClient::on_connectButton_clicked()
@@ -182,12 +193,19 @@ void GPClient::updateConnectionStatus(QString status)
             ui->connectButton->setText("Login");
             ui->gatewaysComboBox->setDisabled(true);
             ui->portalInput->setDisabled(false);
+
+            //update tray icon
+            ui->actionConnect->setText("Login");
+            systemTrayIcon->setIcon(QIcon(":/images/not_connected.png"));
         } else {
             ui->statusLabel->setText("Not Connected");
             ui->statusImage->setStyleSheet("image: url(:/images/not_connected.png); padding: 15;");
             ui->connectButton->setText("Connect");
             ui->gatewaysComboBox->setDisabled(false);
             ui->portalInput->setDisabled(true);
+            //update tray icon
+            ui->actionConnect->setText("Connect");
+            systemTrayIcon->setIcon(QIcon(":/images/not_connected.png"));
         }
     } else if (status == "pending") {
         ui->statusImage->setStyleSheet("image: url(:/images/pending.png); padding: 15;");
@@ -195,6 +213,9 @@ void GPClient::updateConnectionStatus(QString status)
         ui->portalInput->setDisabled(true);
         ui->gatewaysComboBox->setDisabled(true);
         ui->connectButton->setDisabled(false);
+        //update tray icon
+        ui->actionConnect->setText("Cancel");
+        systemTrayIcon->setIcon(QIcon(":/images/not_connected.png"));
     } else if (status == "connected") {
         ui->statusLabel->setText("Connected");
         ui->statusImage->setStyleSheet("image: url(:/images/connected.png); padding: 15;");
@@ -202,6 +223,9 @@ void GPClient::updateConnectionStatus(QString status)
         ui->portalInput->setDisabled(true);
         ui->gatewaysComboBox->setDisabled(true);
         ui->connectButton->setDisabled(false);
+        //update tray icon
+        ui->actionConnect->setText("Disconnect");
+        systemTrayIcon->setIcon(QIcon(":/images/connected.png"));
     }
 }
 
@@ -313,12 +337,11 @@ void GPClient::on_actionClear_data_triggered()
 
 void GPClient::connectToGateway(const QString gateway)
 {
-    systemTrayIcon->showMessage("Teste", "teste");
     QString portal = settings->value("portal", "").toString();
     QStringList gatewaynames = settings->value("gatewaynames", QStringList()).toStringList();
     QString usertoken = settings->value("userauthcookie", "").toString();
     QString user = settings->value("user", "").toString();
-    ui->statusBar->showMessage("Connect to: " + gateway);
+    ui->statusBar->showMessage("Gateway: " + gateway);
 
     QString host = QString("https://%1/%2:%3").arg(portal, "portal", "portal-userauthcookie");
     qInfo("Connection data %s %s %s %s", host.toStdString().c_str(), user.toStdString().c_str(), usertoken.toStdString().c_str(), gateway.toStdString().c_str());
@@ -333,4 +356,9 @@ void GPClient::on_actionInstall_Root_CA_s_triggered()
 void GPClient::on_actionUninstall_Root_CA_s_triggered()
 {
     clientoperator->uninstallCertificates();
+}
+
+void GPClient::on_actionConnect_triggered()
+{
+    on_connectButton_clicked();
 }
