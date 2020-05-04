@@ -6,6 +6,7 @@
 #include <QProcess>
 #include "bestavailablethread.h"
 #include <QTemporaryFile>
+#include <QDir>
 
 GPClientOperator::GPClientOperator(QObject *parent) : QObject(parent)
 {
