@@ -1,10 +1,10 @@
 #! /bin/bash
 sudo apt install -y qt5-default libqt5websockets5-dev qtwebengine5-dev vpnc resolvconf
 cd $(mktemp -d)
-curl https://github.com/inloco/GlobalProtect-openconnect/archive/v1.4.5.zip \
- -o GlobalProtect-openconnect-v1.4.5.zip -L
-unzip GlobalProtect-openconnect-v1.4.5.zip
-cd GlobalProtect-openconnect-1.4.5
+curl https://github.com/inloco/GlobalProtect-openconnect/archive/v1.4.8.zip \
+ -o GlobalProtect-openconnect-v1.4.8.zip -L
+unzip GlobalProtect-openconnect-v1.4.8.zip
+cd GlobalProtect-openconnect-1.4.8
 qmake CONFIG+=release
 make
 sudo make install
