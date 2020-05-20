@@ -53,14 +53,13 @@ void GPClientOperator::getconfigResultFinished()
 {
     QNetworkReply::NetworkError err = reply->error();
     if (err) {
-        qWarning() << "Prelogin request error: " << err;
-        //emit connectFailed();
+        qWarning() << "Get config request error: " << err;
+        emit connectFailed();
         return;
     }
 
     QByteArray xmlBytes = reply->readAll();
     QDomDocument doc;
-    qInfo(xmlBytes);
     doc.setContent(xmlBytes);
 
     // Get Gateways names
