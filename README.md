@@ -1,9 +1,13 @@
 # GlobalProtect-openconnect
 A GlobalProtect VPN client (GUI) for Linux based on Openconnect and built with Qt5, supports SAML auth mode, inspired by [gp-saml-gui](https://github.com/dlenski/gp-saml-gui).
 
-<p align="center">
-  <img src="screenshot.png">
-</p>
+
+
+
+|Initial Window      |Gateways in dropdown list after login     |VPN Connected       |Install VPN certificates (Ubuntu and Fedora)
+|----------|----------|----------|-----------|
+| ![Start](imgs/img3.png)  |![Login](imgs/img4.png)|![Connect](imgs/img5.png)|![Connect](imgs/img7.png)|
+
 
 ## Prerequisites
 
