@@ -146,6 +146,7 @@
     <addaction name="actionClear_data"/>
     <addaction name="separator"/>
     <addaction name="menuCertificates"/>
+    <addaction name="actionUse_IPSec"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -197,6 +198,14 @@
    </property>
    <property name="menuRole">
     <enum>QAction::QuitRole</enum>
+   </property>
+  </action>
+  <action name="actionUse_IPSec">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use IPSec</string>
    </property>
   </action>
  </widget>

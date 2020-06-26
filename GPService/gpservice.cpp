@@ -76,7 +76,7 @@ void GPService::connect(QString server, QString username, QString passwd)
     openconnect->closeWriteChannel();
 }
 
-void GPService::connect_gw(QString server, QString username, QString passwd, QString gateway)
+void GPService::connect_gw(QString server, QString username, QString passwd, QString gateway, bool ipsec)
 {
     if (vpnStatus != GPService::VpnNotConnected) {
         log("VPN status is: " + QVariant::fromValue(vpnStatus).toString());
@@ -97,6 +97,10 @@ void GPService::connect_gw(QString server, QString username, QString passwd, QSt
      << "--passwd-on-stdin"
      << "--timestamp"
      << server;
+
+    if(!ipsec){
+        args << "--no-dtls";
+    }
 
     openconnect->start(bin, args);
     openconnect->write(passwd.toUtf8()+'\n'+gateway.toUtf8()+'\n'+passwd.toUtf8());

@@ -46,6 +46,8 @@ private slots:
     void on_actionConnect_triggered();
     void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
 
+    void on_actionUse_IPSec_toggled(bool arg1);
+
 private:
     Ui::GPClient *ui;
     QNetworkAccessManager *networkManager;

@@ -37,7 +37,7 @@ signals:
 
 public slots:
     void connect(QString server, QString username, QString passwd);
-    void connect_gw(QString server, QString username, QString passwd, QString gateway);
+    void connect_gw(QString server, QString username, QString passwd, QString gateway, bool ipsec);
     void disconnect();
     int status();
     void quit();

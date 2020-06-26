@@ -183,6 +183,8 @@ void GPClient::updateConnectionStatus(QString status)
     ui->gatewaysComboBox->setCurrentIndex(index);
     // Update Portal Text
     ui->portalInput->setText(settings->value("portal", "").toString());
+    // Update Use IPSec option
+    ui->actionUse_IPSec->setChecked(settings->value("ipsec", true).toBool());
 
     if (status == "not_connected") {
         ui->connectButton->setDisabled(false);
@@ -341,11 +343,12 @@ void GPClient::connectToGateway(const QString gateway)
     QStringList gatewaynames = settings->value("gatewaynames", QStringList()).toStringList();
     QString usertoken = settings->value("userauthcookie", "").toString();
     QString user = settings->value("user", "").toString();
+    bool ipsec = settings->value("ipsec", true).toBool();
     ui->statusBar->showMessage("Gateway: " + gateway);
 
     QString host = QString("https://%1/%2:%3").arg(portal, "portal", "portal-userauthcookie");
     qInfo("Connection data %s %s %s %s", host.toStdString().c_str(), user.toStdString().c_str(), usertoken.toStdString().c_str(), gateway.toStdString().c_str());
-    vpn->connect_gw(host, user, usertoken, gateway);
+    vpn->connect_gw(host, user, usertoken, gateway, ipsec);
 }
 
 void GPClient::on_actionInstall_Root_CA_s_triggered()
@@ -361,4 +364,9 @@ void GPClient::on_actionUninstall_Root_CA_s_triggered()
 void GPClient::on_actionConnect_triggered()
 {
     on_connectButton_clicked();
+}
+
+void GPClient::on_actionUse_IPSec_toggled(bool arg1)
+{
+    settings->setValue("ipsec", arg1);
 }
