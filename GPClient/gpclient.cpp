@@ -11,6 +11,8 @@
 #include <QMessageBox>
 #include <QHostInfo>
 #include <QtXml/QDomDocument>
+#include <QWebEngineCookieStore>
+#include <QWebEngineProfile>
 
 
 GPClient::GPClient(QWidget *parent)
@@ -324,7 +326,8 @@ void GPClient::samlLogin(const QString loginUrl, const QString html)
 void GPClient::on_actionLogout_triggered()
 {
     settings->setValue("userauthcookie", "");
-    vpn->disconnect();
+    vpn->disconnect();    
+    QWebEngineProfile::defaultProfile()->cookieStore()->deleteAllCookies();
     updateConnectionStatus("not_connected");
 }
 
@@ -333,8 +336,7 @@ void GPClient::on_actionClear_data_triggered()
     settings->setValue("portal", "");
     settings->setValue("gatewaynames", QStringList());
     settings->setValue("lastGateway", "");
-    vpn->disconnect();
-    updateConnectionStatus("not_connected");
+    on_actionLogout_triggered();
 }
 
 void GPClient::connectToGateway(const QString gateway)
