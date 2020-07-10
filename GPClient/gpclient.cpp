@@ -23,11 +23,15 @@ GPClient::GPClient(QWidget *parent)
     
     setFixedSize(width(), height());
     moveCenter();
-
+    loginRetry = -1;
     // Restore portal from the previous settings
     settings = new QSettings("com.yuezk.qt", "GPClient");
     QObject::connect(this, &GPClient::connectFailed, [this]() {
         updateConnectionStatus("not_connected");
+        if(loginRetry > 0){
+            loginRetry -= 1;
+            on_connectButton_clicked();
+        }
     });
 
     // QNetworkAccessManager setup
@@ -71,6 +75,10 @@ void GPClient::on_connectButton_clicked()
     QString btnText = ui->connectButton->text();
     QString usertoken = settings->value("userauthcookie", "").toString();
     QString user = settings->value("user", "").toString();
+
+    if(loginRetry == -1){
+        loginRetry = 2;
+    }
 
     if (btnText.endsWith("Login")) {
         QString portal = ui->portalInput->text();
@@ -170,6 +178,7 @@ void GPClient::getConfigSuccess(QString user, QString usercookie, QStringList ga
     settings->setValue("user", user);
     settings->setValue("gatewaynames", gateways);
     settings->setValue("cas", cas);
+    loginRetry = -1;
     updateConnectionStatus("not_connected");
 }
 

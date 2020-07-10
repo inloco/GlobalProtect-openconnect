@@ -58,6 +58,7 @@ private:
     QString phpsessid;
     QString preloginCookie;
     QSystemTrayIcon * systemTrayIcon;
+    int loginRetry;
 
     void initVpnStatus();
     void moveCenter();
