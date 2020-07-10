@@ -3,10 +3,10 @@ sudo dnf groupinstall "Development Tools" -y
 sudo dnf install -y qt5-qtbase-devel \
  qt5-qtwebsockets-devel qt5-qtwebengine-devel
 cd $(mktemp -d)
-curl https://github.com/inloco/GlobalProtect-openconnect/archive/v1.4.11.zip \
- -o GlobalProtect-openconnect-v1.4.11.zip -L
-unzip GlobalProtect-openconnect-v1.4.11.zip
-cd GlobalProtect-openconnect-1.4.11
+curl https://github.com/inloco/GlobalProtect-openconnect/archive/v1.4.12.zip \
+ -o GlobalProtect-openconnect-v1.4.12.zip -L
+unzip GlobalProtect-openconnect-v1.4.12.zip
+cd GlobalProtect-openconnect-1.4.12
 qmake-qt5 CONFIG+=release
 make
 sudo make install
