@@ -18,6 +18,7 @@
       <arg name="username" type="s" direction="in"/>
       <arg name="passwd" type="s" direction="in"/>
       <arg name="gateway" type="s" direction="in"/>
+      <arg name="ipsec" type="b" direction="in"/>
     </method>
     <method name="disconnect">
     </method>

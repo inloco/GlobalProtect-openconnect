@@ -11,6 +11,8 @@
 #include <QMessageBox>
 #include <QHostInfo>
 #include <QtXml/QDomDocument>
+#include <QWebEngineCookieStore>
+#include <QWebEngineProfile>
 
 
 GPClient::GPClient(QWidget *parent)
@@ -21,11 +23,15 @@ GPClient::GPClient(QWidget *parent)
     
     setFixedSize(width(), height());
     moveCenter();
-
+    loginRetry = -1;
     // Restore portal from the previous settings
     settings = new QSettings("com.yuezk.qt", "GPClient");
     QObject::connect(this, &GPClient::connectFailed, [this]() {
         updateConnectionStatus("not_connected");
+        if(loginRetry > 0){
+            loginRetry -= 1;
+            on_connectButton_clicked();
+        }
     });
 
     // QNetworkAccessManager setup
@@ -69,6 +75,10 @@ void GPClient::on_connectButton_clicked()
     QString btnText = ui->connectButton->text();
     QString usertoken = settings->value("userauthcookie", "").toString();
     QString user = settings->value("user", "").toString();
+
+    if(loginRetry == -1){
+        loginRetry = 2;
+    }
 
     if (btnText.endsWith("Login")) {
         QString portal = ui->portalInput->text();
@@ -168,6 +178,7 @@ void GPClient::getConfigSuccess(QString user, QString usercookie, QStringList ga
     settings->setValue("user", user);
     settings->setValue("gatewaynames", gateways);
     settings->setValue("cas", cas);
+    loginRetry = -1;
     updateConnectionStatus("not_connected");
 }
 
@@ -183,6 +194,8 @@ void GPClient::updateConnectionStatus(QString status)
     ui->gatewaysComboBox->setCurrentIndex(index);
     // Update Portal Text
     ui->portalInput->setText(settings->value("portal", "").toString());
+    // Update Use IPSec option
+    ui->actionUse_IPSec->setChecked(settings->value("ipsec", true).toBool());
 
     if (status == "not_connected") {
         ui->connectButton->setDisabled(false);
@@ -322,7 +335,8 @@ void GPClient::samlLogin(const QString loginUrl, const QString html)
 void GPClient::on_actionLogout_triggered()
 {
     settings->setValue("userauthcookie", "");
-    vpn->disconnect();
+    vpn->disconnect();    
+    QWebEngineProfile::defaultProfile()->cookieStore()->deleteAllCookies();
     updateConnectionStatus("not_connected");
 }
 
@@ -331,8 +345,7 @@ void GPClient::on_actionClear_data_triggered()
     settings->setValue("portal", "");
     settings->setValue("gatewaynames", QStringList());
     settings->setValue("lastGateway", "");
-    vpn->disconnect();
-    updateConnectionStatus("not_connected");
+    on_actionLogout_triggered();
 }
 
 void GPClient::connectToGateway(const QString gateway)
@@ -341,11 +354,12 @@ void GPClient::connectToGateway(const QString gateway)
     QStringList gatewaynames = settings->value("gatewaynames", QStringList()).toStringList();
     QString usertoken = settings->value("userauthcookie", "").toString();
     QString user = settings->value("user", "").toString();
+    bool ipsec = settings->value("ipsec", true).toBool();
     ui->statusBar->showMessage("Gateway: " + gateway);
 
     QString host = QString("https://%1/%2:%3").arg(portal, "portal", "portal-userauthcookie");
     qInfo("Connection data %s %s %s %s", host.toStdString().c_str(), user.toStdString().c_str(), usertoken.toStdString().c_str(), gateway.toStdString().c_str());
-    vpn->connect_gw(host, user, usertoken, gateway);
+    vpn->connect_gw(host, user, usertoken, gateway, ipsec);
 }
 
 void GPClient::on_actionInstall_Root_CA_s_triggered()
@@ -361,4 +375,9 @@ void GPClient::on_actionUninstall_Root_CA_s_triggered()
 void GPClient::on_actionConnect_triggered()
 {
     on_connectButton_clicked();
+}
+
+void GPClient::on_actionUse_IPSec_toggled(bool arg1)
+{
+    settings->setValue("ipsec", arg1);
 }

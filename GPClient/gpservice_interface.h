@@ -43,10 +43,10 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("connect"), argumentList);
     }
 
-    inline QDBusPendingReply<> connect_gw(const QString &server, const QString &username, const QString &passwd, const QString &gateway)
+    inline QDBusPendingReply<> connect_gw(const QString &server, const QString &username, const QString &passwd, const QString &gateway, bool ipsec)
     {
         QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(server) << QVariant::fromValue(username) << QVariant::fromValue(passwd) << QVariant::fromValue(gateway);
+        argumentList << QVariant::fromValue(server) << QVariant::fromValue(username) << QVariant::fromValue(passwd) << QVariant::fromValue(gateway) << QVariant::fromValue(ipsec);
         return asyncCallWithArgumentList(QStringLiteral("connect_gw"), argumentList);
     }
 

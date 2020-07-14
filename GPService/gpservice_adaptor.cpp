@@ -39,10 +39,10 @@ void GPServiceAdaptor::connect(const QString &server, const QString &username, c
     QMetaObject::invokeMethod(parent(), "connect", Q_ARG(QString, server), Q_ARG(QString, username), Q_ARG(QString, passwd));
 }
 
-void GPServiceAdaptor::connect_gw(const QString &server, const QString &username, const QString &passwd, const QString &gateway)
+void GPServiceAdaptor::connect_gw(const QString &server, const QString &username, const QString &passwd, const QString &gateway, bool ipsec)
 {
     // handle method call com.yuezk.qt.GPService.connect_gw
-    QMetaObject::invokeMethod(parent(), "connect_gw", Q_ARG(QString, server), Q_ARG(QString, username), Q_ARG(QString, passwd), Q_ARG(QString, gateway));
+    QMetaObject::invokeMethod(parent(), "connect_gw", Q_ARG(QString, server), Q_ARG(QString, username), Q_ARG(QString, passwd), Q_ARG(QString, gateway), Q_ARG(bool, ipsec));
 }
 
 void GPServiceAdaptor::disconnect()

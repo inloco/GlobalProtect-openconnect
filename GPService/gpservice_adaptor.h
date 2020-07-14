@@ -47,6 +47,7 @@ class GPServiceAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"username\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"passwd\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"gateway\"/>\n"
+"      <arg direction=\"in\" type=\"b\" name=\"ipsec\"/>\n"
 "    </method>\n"
 "    <method name=\"disconnect\"/>\n"
 "    <method name=\"status\">\n"
@@ -61,7 +62,7 @@ public:
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     void connect(const QString &server, const QString &username, const QString &passwd);
-    void connect_gw(const QString &server, const QString &username, const QString &passwd, const QString &gateway);
+    void connect_gw(const QString &server, const QString &username, const QString &passwd, const QString &gateway, bool ipsec);
     void disconnect();
     int status();
 Q_SIGNALS: // SIGNALS
